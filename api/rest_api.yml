@@ -1,0 +1,583 @@
+openapi: 3.0.0
+
+tags:
+  - name: Create, Update, Delete Post
+  - name: Comment, Rate Post
+  - name: Social Links
+  - name: News Feed
+  - name: Search Engine
+
+info:
+  title: Social Network for Travellers (SocNFT) API
+  description: Current API describes interaction with SocNFT
+  version: 1.0.0
+
+paths:
+  # done
+  /posts/create:
+    post:
+      summary: create post
+      description: Method creates post
+      tags:
+        - Create, Update, Delete Post
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+
+                images:
+                  type: array
+                  items:
+                    properties:
+                        path:
+                          type: string
+
+                description:  
+                  type: string
+                  description: text desctiption from author
+                  
+                coordinates:  
+                  type: string
+                  description: coordinates desctiption from author
+                  
+                  
+              required:
+                - images
+
+            examples:
+              request:
+                value:
+                  images:
+                    path: "myPath/photo1.jpg"
+
+                  description: "this an an author description"
+                  coordinates: "this an an author coordinates"
+                  
+
+      responses:
+        200:
+          description: Ok
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                    description: id of the created post
+                required:
+                  - id
+              examples:
+                response:
+                  value:
+                    id: "12ae3c"
+        400:
+          description: Bad Request
+        500:
+          description: Server error
+
+  # done
+  /posts/${userId}/${postId}:
+    put:
+      summary: modify/delete post
+      description: Method modifes/delete post
+      tags:
+        - Create, Update, Delete Post
+
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          description: target user identifier
+          schema:
+            type : string
+      
+        - name: postId
+          in: path
+          required: true
+          description: target post identifier
+          schema:
+            type : string
+
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+
+                operation_type:
+                  type: string
+                  description: type of operation "update" or "delete"
+
+                images:
+                  type: array
+                  items:
+                    properties:
+                        path:
+                          type: string
+
+                description:  
+                  type: string
+                  description: text desctiption from author
+                  
+                coordinates:  
+                  type: string
+                  description: coordinates desctiption from author
+                
+
+                  
+              required:
+                - images
+
+            examples:
+              request:
+                value:
+                  operation_type: update
+                  images:
+                    path: "myPath/photo1.jpg"
+
+                  description: "this an an another author description"
+                  coordinates: "this an an another author coordinates"
+                  
+
+      responses:
+        200:
+          description: Ok
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                    description: id of the created post
+                required:
+                  - id
+              examples:
+                response:
+                  value:
+                    id: "12ae3c"
+        400:
+          description: Bad Request
+        500:
+          description: Server error
+
+  # done
+  /ratePost/${userId}/${postId}:
+    post:
+      summary: rate post
+      description: Method rates post
+      tags:
+        - Comment, Rate Post
+
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          description: target user identifier
+          schema:
+            type : string
+        - name: postId
+          in: path
+          required: true
+          description: target post identifier
+          schema:
+            type : string
+
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+
+
+                rate_type:
+                  type: string
+                  description: type of enum "like", "dislike" etc
+
+ 
+              required:
+                - rate_type
+
+            examples:
+              request:
+                value:
+                  rate_type: "like"
+                  
+      responses:
+        200:
+          description: Ok
+        400:
+          description: Bad Request
+        500:
+          description: Server error
+          
+    put:
+      summary: modify rate post
+      description: Method rates post
+      tags:
+        - Comment, Rate Post
+
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          description: target user identifier
+          schema:
+            type : string
+        - name: postId
+          in: path
+          required: true
+          description: target post identifier
+          schema:
+            type : string
+
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                
+                operation_type:
+                  type: string
+                  description: type of operation "update" or "delete"
+                
+                rate_type:
+                  type: string
+                  description: type of enum "like", "dislike" etc
+
+ 
+              required:
+                - operation_type
+
+            examples:
+              request:
+                value:
+                  operation_type: "delete"
+                  
+      responses:
+        200:
+          description: Ok
+        400:
+          description: Bad Request
+        500:
+          description: Server error
+          
+  # done
+  /commentPost/${userId}/${postId}:
+    post:
+      summary: comment post
+      description: Method for commenting post
+      tags:
+        - Comment, Rate Post
+
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          description: target user identifier
+          schema:
+            type : string
+        - name: postId
+          in: path
+          required: true
+          description: target post identifier
+          schema:
+            type : string
+
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+
+                rate_type:
+                  type: string
+                  description: type of enum "like", "dislike" etc
+
+ 
+              required:
+                - rate_type
+
+            examples:
+              request:
+                value:
+                  rate_type: "like"
+                  
+      responses:
+        200:
+          description: Ok
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                    description: id of the created comment
+                required:
+                  - id
+              examples:
+                response:
+                  value:
+                    id: "12ae3c"
+        400:
+          description: Bad Request
+        500:
+          description: Server error
+          
+    put:
+      summary: modify comment in post
+      description: Method rates post
+      tags:
+        - Comment, Rate Post
+
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          description: target user identifier
+          schema:
+            type : string
+        - name: postId
+          in: path
+          required: true
+          description: target post identifier
+          schema:
+            type : string
+
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                
+                operation_type:
+                  type: string
+                  description: type of operation "update" or "delete"
+                
+                rate_type:
+                  type: string
+                  description: type of enum "like", "dislike" etc
+
+ 
+              required:
+                - operation_type
+
+            examples:
+              request:
+                value:
+                  operation_type: "delete"
+                  
+      responses:
+        200:
+          description: Ok
+        400:
+          description: Bad Request
+        500:
+          description: Server error
+          
+  /subscribe/${userId}:
+    post:
+      summary: subscribe to user
+      description: Method subscribe user as friend
+      tags:
+        - Social Links
+        
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          description: target user identifier
+          schema:
+            type : string
+        
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+
+                operation_type:  
+                  type: string
+                  description: type of operation "subscribe", "unsubscribe"
+                  
+              required:
+                - images
+
+            examples:
+              request:
+                value:
+                  operation_type: "subscribe"
+                  
+
+      responses:
+        200:
+          description: Ok
+        208:
+          description: Already subscribed/unsubscribed
+        400:
+          description: Bad Request
+        500:
+          description: Server error
+          
+  /newsFeed/${userId}:
+    #done
+    get:
+      summary: newsfeed for concrete user
+      description: get newsfeed for concrete user
+      tags:
+        - News Feed
+        
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          description: target user identifier
+          schema:
+            type : string
+
+      responses:
+        200:
+          description: Ok
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  chunk_id:
+                    type: string
+                    description: id of the created post
+          
+                  items:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                          image:
+                            type: string
+                          comment:
+                            type: string
+                          coordinates:
+                            type: string
+                          
+                    
+                required:
+                  - items
+
+        400:
+          description: Bad Request
+        500:
+          description: Server error
+          
+  /newsFeed/friends:
+    get:
+      summary: newsfeed for all friends
+      description: get newsfeed for concrete user
+      tags:
+        - News Feed
+        
+      responses:
+        200:
+          description: Ok
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  chunk_id:
+                    type: string
+                    description: id of the created post
+          
+                  items:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                          user_id:
+                            type: string
+                          image:
+                            type: string
+                          comment:
+                            type: string
+                          coordinates:
+                            type: string
+                          
+                    
+                required:
+                  - items
+
+        400:
+          description: Bad Request
+        500:
+          description: Server error
+          
+  /search:
+    post:
+      summary: find place by description
+      description: find place by description
+      tags:
+        - Search Engine
+        
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+
+                description:  
+                  type: string
+                  description: text for search place
+
+              required:
+                - description
+        
+      responses:
+        200:
+          description: Ok
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  chunk_id:
+                    type: string
+                    description: id of the created post
+          
+                  items:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                          post_id:
+                            type: string
+                          description:
+                            type: string
+                          coordinates:
+                            type: string
+                          
+                    
+                required:
+                  - items
+
+        400:
+          description: Bad Request
+        500:
+          description: Server error
