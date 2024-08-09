@@ -73,3 +73,32 @@ read:
 RPS = 10000000 * 1000 / 86400 = 116000 rps
 AvgRequest = 100b
 Traffic = 116000 rps * 100b = 11 600 000 b = 11 600kb/s = 12 Mb/s
+
+
+# Number of discs calculation:
+
+Considering the following SSD:
+
+| Capacity, Tb | Throughput, Mb/s | IOPS |
+|--------------|------------------|------|
+| 100          | 500              | 1000 |
+
+
+Result table
+|                      | posts     |           | comments |        | reactions |         |
+|----------------------|-----------|-----------|----------|--------|-----------|---------|
+|                      | write     | read      | write    | read   | write     | read    |
+| Traffic, Gb/s        | 4         | 18        | 0.0005   | 0.025  | 0.00012   | 0.012   |
+| Traffic, Mb/s        | 4000      | 18000     | 0.5      | 25     | 0.12      | 12      |
+| Traffic, Kb/s        |           |           | 500      |        | 120       |         |
+| Capacity, Gb         | 126144000 | 567648000 | 15768    | 788400 | 3784.32   | 378432  |
+| Capacity, Tb         | 126144    | 567648    | 15.768   | 788.4  | 3.78432   | 378.432 |
+| Capacity, Pb         | 126.144   | 567.648   |          |        |           |         |
+|                      |           |           |          |        |           |         |
+| Disks for capacity   | 1261.44   | 5676.48   | 0.15768  | 7.884  | 0.0378432 | 3.78432 |
+| Disks for throughput | 8         | 36        | 0.001    | 0.05   | 0.00024   | 0.024   |
+| Disks for iops       | 4         | 18        | 0.0005   | 0.025  | 0.00012   | 0.012   |
+|                      |           |           |          |        |           |         |
+| Result num disks     | 1262      | 5677      | 1        | 8      | 1         | 4       |
+
+Summary: need around 7000 SSD Discs
