@@ -2,8 +2,9 @@ openapi: 3.0.0
 
 tags:
   - name: Create, Update, Delete Post
-  - name: Comment, Rate Post
-  - name: Social Links
+  - name: Ratings
+  - name: Comments
+  - name: Social Networks
   - name: News Feed
   - name: Search Engine
 
@@ -13,8 +14,7 @@ info:
   version: 1.0.0
 
 paths:
-  # done
-  /posts/create:
+  /posts:
     post:
       summary: create post
       description: Method creates post
@@ -79,22 +79,14 @@ paths:
         500:
           description: Server error
 
-  # done
-  /posts/${userId}/${postId}:
+  /posts/${postId}:
     put:
-      summary: modify/delete post
-      description: Method modifes/delete post
+      summary: modify post
+      description: Method modifes post
       tags:
         - Create, Update, Delete Post
 
       parameters:
-        - name: userId
-          in: path
-          required: true
-          description: target user identifier
-          schema:
-            type : string
-      
         - name: postId
           in: path
           required: true
@@ -109,10 +101,6 @@ paths:
             schema:
               type: object
               properties:
-
-                operation_type:
-                  type: string
-                  description: type of operation "update" or "delete"
 
                 images:
                   type: array
@@ -137,7 +125,6 @@ paths:
             examples:
               request:
                 value:
-                  operation_type: update
                   images:
                     path: "myPath/photo1.jpg"
 
@@ -166,22 +153,37 @@ paths:
           description: Bad Request
         500:
           description: Server error
+          
+    delete:
+      summary: delete post
+      description: Method deletes post
+      tags:
+        - Create, Update, Delete Post
 
-  # done
-  /ratePost/${userId}/${postId}:
-    post:
+      parameters:
+        - name: postId
+          in: path
+          required: true
+          description: target post identifier
+          schema:
+            type : string
+
+      responses:
+        204:
+          description: Ok
+        400:
+          description: Bad Request
+        500:
+          description: Server error
+
+  /ratings/${postId}:
+    put:
       summary: rate post
       description: Method rates post
       tags:
-        - Comment, Rate Post
+        - Ratings
 
       parameters:
-        - name: userId
-          in: path
-          required: true
-          description: target user identifier
-          schema:
-            type : string
         - name: postId
           in: path
           required: true
@@ -198,95 +200,36 @@ paths:
               properties:
 
 
-                rate_type:
-                  type: string
+                reaction_id:
+                  type: integer
                   description: type of enum "like", "dislike" etc
 
  
               required:
-                - rate_type
+                - reaction_id
 
             examples:
               request:
                 value:
-                  rate_type: "like"
+                  reaction_id: "4"
                   
       responses:
         200:
-          description: Ok
+          description: ok
         400:
           description: Bad Request
         500:
           description: Server error
-          
-    put:
-      summary: modify rate post
-      description: Method rates post
-      tags:
-        - Comment, Rate Post
-
-      parameters:
-        - name: userId
-          in: path
-          required: true
-          description: target user identifier
-          schema:
-            type : string
-        - name: postId
-          in: path
-          required: true
-          description: target post identifier
-          schema:
-            type : string
-
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                
-                operation_type:
-                  type: string
-                  description: type of operation "update" or "delete"
-                
-                rate_type:
-                  type: string
-                  description: type of enum "like", "dislike" etc
-
- 
-              required:
-                - operation_type
-
-            examples:
-              request:
-                value:
-                  operation_type: "delete"
                   
-      responses:
-        200:
-          description: Ok
-        400:
-          description: Bad Request
-        500:
-          description: Server error
-          
-  # done
-  /commentPost/${userId}/${postId}:
+
+  /comments/${postId}:
     post:
       summary: comment post
-      description: Method for commenting post
+      description: Method for add new comment to post
       tags:
-        - Comment, Rate Post
+        - Comments
 
       parameters:
-        - name: userId
-          in: path
-          required: true
-          description: target user identifier
-          schema:
-            type : string
         - name: postId
           in: path
           required: true
@@ -302,18 +245,18 @@ paths:
               type: object
               properties:
 
-                rate_type:
+                data:
                   type: string
-                  description: type of enum "like", "dislike" etc
+                  description: text of the comment
 
  
               required:
-                - rate_type
+                - data
 
             examples:
               request:
                 value:
-                  rate_type: "like"
+                  data: "Nice place to visit"
                   
       responses:
         200:
@@ -336,24 +279,19 @@ paths:
           description: Bad Request
         500:
           description: Server error
-          
+
+  /comments/${commentId}:    
     put:
       summary: modify comment in post
       description: Method rates post
       tags:
-        - Comment, Rate Post
+        - Comments
 
       parameters:
-        - name: userId
+        - name: commentId
           in: path
           required: true
-          description: target user identifier
-          schema:
-            type : string
-        - name: postId
-          in: path
-          required: true
-          description: target post identifier
+          description: target comment identifier
           schema:
             type : string
 
@@ -365,22 +303,17 @@ paths:
               type: object
               properties:
                 
-                operation_type:
+                data:
                   type: string
-                  description: type of operation "update" or "delete"
-                
-                rate_type:
-                  type: string
-                  description: type of enum "like", "dislike" etc
+                  description: text of the comment
 
- 
               required:
-                - operation_type
+                - data
 
             examples:
               request:
                 value:
-                  operation_type: "delete"
+                  data: "another nice place to visit"
                   
       responses:
         200:
@@ -390,12 +323,12 @@ paths:
         500:
           description: Server error
           
-  /subscribe/${userId}:
+  /subscriptions/${userId}:
     post:
       summary: subscribe to user
       description: Method subscribe user as friend
       tags:
-        - Social Links
+        - Social Networks
         
       parameters:
         - name: userId
@@ -405,39 +338,41 @@ paths:
           schema:
             type : string
         
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-
-                operation_type:  
-                  type: string
-                  description: type of operation "subscribe", "unsubscribe"
-                  
-              required:
-                - images
-
-            examples:
-              request:
-                value:
-                  operation_type: "subscribe"
-                  
-
       responses:
         200:
           description: Ok
         208:
-          description: Already subscribed/unsubscribed
+          description: Already subscribed
         400:
           description: Bad Request
         500:
           description: Server error
           
-  /newsFeed/${userId}:
-    #done
+    delete:
+      summary: unsubscribe from user
+      description: Method unsubscibe from user
+      tags:
+        - Social Networks
+        
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          description: target user identifier
+          schema:
+            type : string
+        
+      responses:
+        200:
+          description: Ok
+        208:
+          description: Already unsubscribed
+        400:
+          description: Bad Request
+        500:
+          description: Server error
+          
+  /friends/news/${userId}:
     get:
       summary: newsfeed for concrete user
       description: get newsfeed for concrete user
@@ -485,9 +420,9 @@ paths:
         500:
           description: Server error
           
-  /newsFeed/friends:
+  /friends/news:
     get:
-      summary: newsfeed for all friends
+      summary: newsfeed from all friends
       description: get newsfeed for concrete user
       tags:
         - News Feed
@@ -527,7 +462,7 @@ paths:
         500:
           description: Server error
           
-  /search:
+  /places:
     post:
       summary: find place by description
       description: find place by description
