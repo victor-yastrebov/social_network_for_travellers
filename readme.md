@@ -164,3 +164,25 @@ Async replication
 
 Sharding by comment-id
 Async replication
+
+
+## Design overview
+
+
+<p align="center">
+    </br><b>Level 1.</b> System context diagram</br></br>
+</p>
+
+<p align="center">
+  <img src="images/diagrams/PrincipalScheme.svg" />
+</p>
+
+Calculations for in-memory TNT DB:
+Will show only first photo ~ 500 Kb
+Cache for 20 latest posts.
+
+For home timeline:
+10 000 000 * 500Kb * 20 =  100 000 000 000 Kb = 100 Tb
+50 hosts with 2 Tb RAM
+
+Same for user_timeline.
