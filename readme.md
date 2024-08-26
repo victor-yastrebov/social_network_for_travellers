@@ -102,3 +102,65 @@ Result table
 | Result num disks     | 1262      | 5677      | 1        | 8      | 1         | 4       |
 
 Summary: need around 7000 SSD Discs
+
+
+# Number of hosts calculation:
+
+*posts*:
+disks = 7000
+disks_per_host = 2
+replication_factor = 2
+
+Hosts = 7000 / 2 * 2 = 7000
+
+*comments*
+disks = 10
+disks_per_host = 2
+replication_factor = 2
+
+Hosts = 10 / 2 * 2 = 5
+
+*reactions*
+disks = 5
+disks_per_host = 2
+replication_factor = 2
+
+Hosts = 5 / 2 * 2 = 6
+
+
+# sharding:
+
+## Description service:
+
+Sharding by description-id
+Async replication
+
+## Relations service:
+
+Sharding by user-id
+Async replication
+
+## Posts service:
+
+Sharding by post-id
+Async replication
+
+## Timeline service:
+
+Sharding by user-id
+Async replication
+
+## Media service:
+
+Sharding by media-id
+Async replication
+
+## Reactions service:
+
+Sharding by post-id
+Async replication
+
+## Comments service:
+
+Sharding by comment-id
+Async replication
