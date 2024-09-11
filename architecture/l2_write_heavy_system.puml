@@ -1,0 +1,52 @@
+@startuml
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
+
+Person(user, "User")
+Container(loadBalancer, "Load Balancer", "Nginx", "Uses round robin")
+ContainerQueue(messageQueueOut, "Events queue", "Kafka", "Message queue for events by Posts Service")
+Container(readHeavySystem, "Read-heavy system", "System", "Process ready-heavy part of the whole system: newsfeed")
+
+System_Boundary(writeSystem, "Write-heavy system") {
+    Container(postsService, "Posts service", "C++", "Handles creation of new posts")
+    ContainerDb(postsServiceDatabase, "Posts service database", "Postgres", "Stores information about posts: title, user_id, description",  $tags="db")
+
+    Container(mediaService, "Media service", "C++", "Handle media data storing")
+    ContainerDb(mediaServiceDatabase, "Media service database", "Ceph", "Stores media data",  $tags="db")
+
+    Container(descriptionService, "Description service", "C++", "Handle storing description, used for search posts by text")
+    ContainerDb(descriptionServiceDatabase, "Description service database", "ElasticSearch", "Stores text description",  $tags="db")
+
+    Container(relationsService, "Relations service", "C++", "Handle relationships between users")
+    ContainerDb(relationsServiceDatabase, "Relations service database", "Posgres", "Stores relationships data",  $tags="db")
+
+    ' msgq
+    ContainerQueue(messageQueuePostsDescription, "Events queue", "Kafka", "Message queue for events by Posts Service")
+    ContainerQueue(messageQueuePostsMedia, "Events queue", "Kafka", "Message queue for events by Posts Service")
+    ContainerQueue(messageQueuePostsRelations, "Events queue", "Kafka", "Message queue for events by Posts Service")
+}
+
+Rel(user, loadBalancer, "Creates new post", "REST")
+Rel(loadBalancer, postsService, "Creates new post", "REST")
+
+'service->db relations
+Rel(postsService, postsServiceDatabase, "Stores information related to posts")
+Rel(mediaService, mediaServiceDatabase, "Stores media data")
+Rel(descriptionService, descriptionServiceDatabase, "Stores text description")
+Rel(relationsService, relationsServiceDatabase, "Stores relationships data")
+
+'service->msgq relations (inside)
+Rel(postsService, messageQueuePostsMedia, "Publishes events for storing media data")
+Rel(mediaService, messageQueuePostsMedia, "Subscribe for events for storing media data")
+
+Rel(postsService, messageQueuePostsDescription, "Publishes events for storing descripton data")
+Rel(descriptionService, messageQueuePostsDescription, "Subscribe for events for storing descripton data")
+
+Rel(postsService, messageQueuePostsRelations, "Publishes events for posts update for related users")
+Rel(relationsService, messageQueuePostsRelations, "Subscribe for events for posts update for related users")
+
+'service->msgq relations (outside)
+Rel(readHeavySystem, messageQueueOut, "Subscribe for events about new posts")
+Rel(postsService, messageQueueOut, "Publishes events for read-heavy part of the system (timeline service)")
+Rel(relationsService, messageQueueOut, "Publishes events for read-heavy part of the system (timeline service)")
+
+@enduml

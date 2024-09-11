@@ -1,0 +1,19 @@
+@startuml
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
+
+Person(user, "User")
+Container(writeSystem, "Write-heavy system", "Software system", "Handles creation of new posts")
+Container(readSystem, "Read-heavy system", "Software system", "Handles reading of newsfeed")
+Container(searchPlacesSystem, "Search places system", "Software system", "Handles searching places by description")
+Container(commentsSystem, "Comments system", "Software system", "Handles comments creation and reading")
+Container(reactionsSystem, "Reactions system", "Software system", "Handles reactions for posts")
+Container(relationsSystem, "Relations system", "Software system", "Handles social network: subscribe / unsubscribe for users")
+
+Rel(user, readSystem, "Reads newsfeed")
+Rel(user, writeSystem, "Creates new post")
+Rel(user, searchPlacesSystem, "Searches places by description")
+Rel(user, commentsSystem, "Reads and writes comments")
+Rel(user, reactionsSystem, "Adds reaction to user post")
+Rel(user, relationsSystem, "Subscribes for user")
+
+@enduml
