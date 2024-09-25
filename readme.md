@@ -34,7 +34,43 @@ Social Network For Travellers (socNFT)
 14) Сколько один пользователь в день будет, в среднем, оставлять реакций: 10 штук
 15) Сколько один пользователь в день будет, в среднем видеть реакций: 1000 штук
 
+## Design overview
 
+For system design I have used [C4 model](https://c4model.com/). The C4 model was created as a way to help software development teams describe and communicate software architecture, both during up-front design sessions and when retrospectively documenting an existing codebase. It's a way to create maps of your code, at various levels of detail, in the same way you would use something like Google Maps to zoom in and out of an area you are interested in.
+
+<p align="center">
+    </br><b>Level 1.</b> System context diagram</br></br>
+</p>
+
+<p align="center">
+  <img src="architecture/l1_context.svg" />
+</p>
+
+<p align="center">
+    </br><b>Level 1.</b> System context diagram detailed</br></br>
+</p>
+
+<p align="center">
+  <img src="architecture/l1_detailed.svg" />
+</p>
+
+
+<p align="center">
+    </br><b>Level 2.</b>Write-heavy system</br></br>
+</p>
+
+<p align="center">
+  <img src="architecture/l2_write_heavy_system.svg" />
+</p>
+
+
+<p align="center">
+    </br><b>Level 2.</b>Read-heavy system</br></br>
+</p>
+
+<p align="center">
+  <img src="architecture/l2_read_heavy_system.svg" />
+</p>
 
 # Performance Analysis:
 

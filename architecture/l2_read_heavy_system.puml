@@ -1,0 +1,34 @@
+@startuml
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
+
+
+Person(user, "User")
+Container(loadBalancer, "Load Balancer", "Nginx", "Uses round robin")
+
+'containers
+'Container(writeHeavySystem, "Write-heavy system", "System", "Process write-heavy part of the whole system: posts creation")
+
+'msgq
+ContainerQueue(msgqCacheUpdate, "Events queue", "Kafka", "Message queue for update cache element events from posts service")
+ContainerQueue(msgqGetPostsData, "Events queue", "Kafka", "Message queue for getting posts data in case of cache is down")
+
+
+System_Boundary(readSystem, "Read-heavy system") {
+    Container(timelineService, "Timeline service", "C++", "Handles preprocessed data for users newsfeed")
+    ContainerDb(timelineServiceDatabase, "Timeline service database", "Tarantool", "Stores cached data for users newsfeed",  $tags="db")
+}
+
+Rel(user, loadBalancer, "Reads newsfeed", "REST")
+Rel(loadBalancer, timelineService, "Reads newsfeed", "REST")
+
+'service->db relations
+Rel(timelineService, timelineServiceDatabase, "Updates cache for users newsfeed")
+
+'service->msgq relations (inside)
+
+'service->msgq relations (outside)
+
+Rel(timelineService, msgqCacheUpdate, "Subcsribe for events for cache update")
+Rel(timelineService, msgqGetPostsData, "Publish events for getting posts in case cache is down")
+
+@enduml
